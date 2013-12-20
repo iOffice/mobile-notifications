@@ -1,5 +1,5 @@
 ;
-(function ($, window, document, undefined) {
+(function (window, document, undefined) {
 
   var defaults = {
     /**
@@ -11,16 +11,11 @@
      */
     class: 'notification',
     /**
-     * Markup of the generated DOM element
-     * Could be a compiled template if called for
-     */
-    markup: '<div></div>',
-    /**
      * Parent element to attach notification to
      * @returns {*|HTMLElement}
      */
     parent: function () {
-      return $('body');
+      return document.body;
     },
     /**
      * Type of notification
@@ -52,16 +47,19 @@
    */
 
   function Notification(text, options) {
-    if (!(this instanceof Notification)) return new Notification((text, options));
+    if (!(this instanceof Notification)) return new Notification(text, options);
+
+    (options = options || {});
 
     this.options = _.defaults(options, defaults);
 
-    this.$el = $(this.options.markup, {
-      class: this.options.class + ' ' + this.options.type,
-      text: _.isUndefined('text') || _.isObject(text) ? '' : text
-    });
+    this.el = document.createElement('div');
+    this.textNode = document.createTextNode((text && typeof text !== 'object') ? text : '');
+    this.el.appendChild(this.textNode);
 
-    this.$parent = _.isFunction(this.options.parent) ? this.options.parent() : this.options.parent;
+    this.el.classList.add(this.options.class, this.options.type);
+
+    this.parent = typeof this.options.parent === 'function' ? this.options.parent() : this.options.parent;
 
     this.init();
   }
@@ -74,11 +72,12 @@
     init: function () {
       this._bindAll();
 
-      this.$parent.append(this.$el);
       this._setupEvents();
 
+      this.parent.appendChild(this.el);
+
       if (this.options.show) {
-        _.defer(this.show);
+        this.show();
       }
     },
 
@@ -87,9 +86,16 @@
      * @returns {Notification}
      */
     show: function () {
-      this.$el.addClass('show');
+      var self = this;
 
-      if (!this.options.tapToClose) _.delay(this.hide, this.options.duration);
+      requestAnimationFrame(function() {
+        self.el.classList.add('show');
+      });
+
+      if (!this.options.tapToClose) {
+
+        _.delay(this.hide, this.options.duration);
+      }
 
       return this;
     },
@@ -99,9 +105,13 @@
      * @returns {Notification}
      */
     hide: function () {
-      this.$el.removeClass('show');
+      var self = this;
 
-      _.delay(this.destroy, this.options.destroyAfter);
+      requestAnimationFrame(function() {
+        self.el.classList.remove('show');
+      });
+
+      setTimeout(this.destroy, this.options.destroyAfter);
 
       return this;
     },
@@ -111,7 +121,8 @@
      */
     destroy: function () {
       this._destroyEvents();
-      this.$el.remove();
+
+      this.parent.removeChild(this.el);
     },
 
     /**
@@ -131,10 +142,7 @@
      * @private
      */
     _setupEvents: function () {
-      var action = this._clickOrTap();
-      if (action === 'tap') this.$el.hammer();
-
-      if (this.options.tapToClose) this.$el.on(action, this.hide);
+      if (this.options.tapToClose) this.el.addEventListener('touchstart', this.hide);
 
       return this;
     },
@@ -145,21 +153,12 @@
      * @private
      */
     _destroyEvents: function () {
-      this.$el.off(this._clickOrTap(), this.hide);
+      this.el.removeEventListener('touchstart', this.hide);
 
       return this;
-    },
-
-    /**
-     * Determine if hammer.js is available to use the tap event
-     * @returns {string}
-     * @private
-     */
-    _clickOrTap: function () {
-      return $.prototype.hammer ? 'tap' : 'click';
     }
   };
 
   window.Notification = Notification;
 
-})(jQuery, window, document);
+})(window, document);
