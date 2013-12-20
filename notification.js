@@ -52,6 +52,8 @@
    */
 
   function Notification(text, options) {
+    if (!(this instanceof Notification)) return new Notification((text, options));
+
     this.options = _.defaults(options, defaults);
 
     this.$el = $(this.options.markup, {
