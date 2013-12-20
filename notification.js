@@ -1,5 +1,16 @@
-;
-(function (window, document, undefined) {
+;(function (window, document, undefined) {
+  // Underscore implementation of _.defaults
+  // https://github.com/jashkenas/underscore/blob/master/underscore.js#L863
+  var mergeDefaults = function(obj) {
+    Array.prototype.slice.call(arguments, 1).forEach(function(source) {
+      if (source) {
+        for (var prop in source) {
+          if (obj[prop] === void 0 ) obj[prop] = source[prop];
+        }
+      }
+    });
+    return obj;
+  };
 
   var defaults = {
     /**
@@ -51,7 +62,7 @@
 
     (options = options || {});
 
-    this.options = _.defaults(options, defaults);
+    this.options = mergeDefaults(options, defaults);
 
     this.el = document.createElement('div');
     this.textNode = document.createTextNode((text && typeof text !== 'object') ? text : '');
@@ -60,6 +71,8 @@
     this.el.classList.add(this.options.class, this.options.type);
 
     this.parent = typeof this.options.parent === 'function' ? this.options.parent() : this.options.parent;
+
+    this.hideHandler = this.hide.bind(this);
 
     this.init();
   }
@@ -70,8 +83,6 @@
      * Notification entry point
      */
     init: function () {
-      this._bindAll();
-
       this._setupEvents();
 
       this.parent.appendChild(this.el);
@@ -88,14 +99,11 @@
     show: function () {
       var self = this;
 
-      requestAnimationFrame(function() {
+      requestAnimFrame(function() {
         self.el.classList.add('show');
       });
 
-      if (!this.options.tapToClose) {
-
-        _.delay(this.hide, this.options.duration);
-      }
+      if (!this.options.tapToClose) setTimeout(this.hide, this.options.duration);
 
       return this;
     },
@@ -107,11 +115,11 @@
     hide: function () {
       var self = this;
 
-      requestAnimationFrame(function() {
+      requestAnimFrame(function() {
         self.el.classList.remove('show');
       });
 
-      setTimeout(this.destroy, this.options.destroyAfter);
+      setTimeout(this.destroy.bind(this), this.options.destroyAfter);
 
       return this;
     },
@@ -126,23 +134,12 @@
     },
 
     /**
-     * Bind all function to the notification object
-     * @private
-     */
-    _bindAll: function () {
-      var functions = _.functions(this);
-      functions.unshift(this);
-
-      _.bindAll.apply(_, functions);
-    },
-
-    /**
      * Setup and attach events to the notification
      * @returns {Notification}
      * @private
      */
     _setupEvents: function () {
-      if (this.options.tapToClose) this.el.addEventListener('touchstart', this.hide);
+      if (this.options.tapToClose) this.el.addEventListener('touchstart', this.hideHandler);
 
       return this;
     },
@@ -153,12 +150,24 @@
      * @private
      */
     _destroyEvents: function () {
-      this.el.removeEventListener('touchstart', this.hide);
+      this.el.removeEventListener('touchstart', this.hideHandler);
 
       return this;
     }
   };
 
   window.Notification = Notification;
+
+  // requestAnimationFrame shim in case of older mobile browsers
+  window.requestAnimFrame = (function(){
+    return  window.requestAnimationFrame       ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame    ||
+      window.oRequestAnimationFrame      ||
+      window.msRequestAnimationFrame     ||
+      function( callback ){
+        window.setTimeout(callback, 1000 / 60);
+      };
+  })();
 
 })(window, document);
