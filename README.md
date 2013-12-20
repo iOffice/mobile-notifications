@@ -7,7 +7,7 @@ Simple notifications intended for use on mobile devices
     notification = new Notification("You have successfully logged in.", {type: 'success', tapToClose: true});
   
 ### Screenshot
-![](http://i.imgur.com/82A7zgBl.png)
+<img src="http://i.imgur.com/82A7zgB.png" alt="" style="width: 160px;"/>
 
 
     
