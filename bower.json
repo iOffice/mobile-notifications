@@ -1,0 +1,32 @@
+{
+  "name": "Mobile-Notifications",
+  "version": "0.1.0",
+  "homepage": "https://github.com/iOffice/Mobile-Notifications",
+  "authors": [
+    "Kye Hohenberger <khohenberger@iofficecorp.com>"
+  ],
+  "description": "Simple notifications for mobile sites",
+  "main": "notification.js",
+  "keywords": [
+    "notification",
+    "mobile",
+    "phone",
+    "gap",
+    "phonegap",
+    "steroids",
+    "cordova",
+    "alert"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "2.0.x",
+    "lodash": "~2.3.0"
+  }
+}
