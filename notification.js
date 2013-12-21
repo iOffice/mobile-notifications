@@ -74,6 +74,8 @@
 
     this.hideHandler = this.hide.bind(this);
 
+    this.parent.appendChild(this.el);
+
     this.init();
   }
 
@@ -85,10 +87,10 @@
     init: function () {
       this._setupEvents();
 
-      this.parent.appendChild(this.el);
-
       if (this.options.show) {
-        this.show();
+        // For iOS we need to wait for the current stack to clear
+        // or the initial animation will not run
+        setTimeout(this.show.bind(this), 1);
       }
     },
 
@@ -99,7 +101,7 @@
     show: function () {
       var self = this;
 
-      requestAnimFrame(function() {
+      requestAnimationFrame(function() {
         self.el.classList.add('show');
       });
 
@@ -115,7 +117,7 @@
     hide: function () {
       var self = this;
 
-      requestAnimFrame(function() {
+      requestAnimationFrame(function() {
         self.el.classList.remove('show');
       });
 
@@ -157,17 +159,5 @@
   };
 
   window.Notification = Notification;
-
-  // requestAnimationFrame shim in case of older mobile browsers
-  window.requestAnimFrame = (function(){
-    return  window.requestAnimationFrame       ||
-      window.webkitRequestAnimationFrame ||
-      window.mozRequestAnimationFrame    ||
-      window.oRequestAnimationFrame      ||
-      window.msRequestAnimationFrame     ||
-      function( callback ){
-        window.setTimeout(callback, 1000 / 60);
-      };
-  })();
 
 })(window, document);
