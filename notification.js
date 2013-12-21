@@ -103,7 +103,7 @@
         self.el.classList.add('show');
       });
 
-      if (!this.options.tapToClose) setTimeout(this.hide, this.options.duration);
+      if (!this.options.tapToClose) setTimeout(this.hide.bind(this), this.options.duration);
 
       return this;
     },
