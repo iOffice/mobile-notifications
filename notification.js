@@ -99,11 +99,7 @@
      * @returns {Notification}
      */
     show: function () {
-      var self = this;
-
-      requestAnimationFrame(function() {
-        self.el.classList.add('show');
-      });
+      this.el.classList.add('show');
 
       if (!this.options.tapToClose) setTimeout(this.hide.bind(this), this.options.duration);
 
@@ -115,11 +111,7 @@
      * @returns {Notification}
      */
     hide: function () {
-      var self = this;
-
-      requestAnimationFrame(function() {
-        self.el.classList.remove('show');
-      });
+      this.el.classList.remove('show');
 
       setTimeout(this.destroy.bind(this), this.options.destroyAfter);
 
