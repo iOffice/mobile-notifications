@@ -10,6 +10,6 @@ Simple notifications intended for use on mobile devices
 <img src="http://i.imgur.com/82A7zgB.png" alt="" style="width: 160px;"/>
 
 ### Example
-[Here's](https://github.com/rachaelshaw/notifications-test) a simple example if you want to see it working.
+Here's a [simple example](https://github.com/rachaelshaw/notifications-test) if you want to see it working.
 
     
