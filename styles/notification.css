@@ -1,12 +1,10 @@
-#mobile-notification-container {
+.notification {
 	position: fixed;
 	z-index: 1001;
 	top: 0;
 	left: 0;
 	right: 0;
-}
 
-.notification {
     height: 40px;
 	width: auto;
     line-height: 40px;
