@@ -19,27 +19,28 @@ module.exports = function(grunt) {
       generatedJS: ['dist/*.js', 'demo/notification.js', 'demo/styles/notification.css']
     },
 
-    traceur: {
-      options: {
-        sourceMaps: true,
-        includeRuntime: true
-      },
-      dev: {
-        files: {
-          'dist/notification.js': ['notification.js']
-        }
-      }
-    },
-
     copy: {
       main: {
         files: [
+          {
+            src: 'notification.js',
+            dest: 'dist/'
+          },
           {
             src: ['dist/notification.js', 'styles/notification.css'],
             dest: 'demo/',
             expand: true
           }
+
         ]
+      }
+    },
+
+    uglify: {
+      prod: {
+        files: {
+          'dist/notification.min.js': ['notification.js']
+        }
       }
     },
 
@@ -53,8 +54,12 @@ module.exports = function(grunt) {
 
   grunt.registerTask("make-dev-files", [
     "clean:generatedJS",
-    "traceur:dev",
+    "uglify:prod",
     "copy:main"
+  ]);
+
+  grunt.registerTask("prod", [
+    "make-dev-files"
   ]);
 
   grunt.registerTask("default", [
