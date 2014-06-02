@@ -112,7 +112,7 @@
     destroy: function() {
       this._destroyEvents.bind(this);
 
-      this.parent.removeChild(this.el);
+      this.el.parentNode.removeChild(this.el);
     },
 
     /**
